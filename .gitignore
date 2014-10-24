@@ -1,0 +1,7 @@
+MANIFEST
+*.pyc
+*.zip
+dist/
+build/
+temp/
+

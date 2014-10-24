@@ -1,5 +1,4 @@
-from basequaternion import BaseQuaternion
-from quaternion import Quaternion
+from api import BaseQuaternion, Quaternion
 
 class UnitQuaternion(BaseQuaternion):
     def __init__(self, a, b, c, d):
@@ -17,7 +16,7 @@ class UnitQuaternion(BaseQuaternion):
             other = self.from_quaternion(other)
             return self._mul_by_quaternion(other)
 
-        super(UnitQuaternion, self).__mul__(other)
+        return super(UnitQuaternion, self).__mul__(other)
 
     @property
     def inverse(self):

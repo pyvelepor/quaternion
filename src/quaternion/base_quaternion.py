@@ -1,6 +1,6 @@
 from math import sqrt
 
-from iquaternion import IQuaternion
+from api import IQuaternion
 
 class BaseQuaternion(IQuaternion):
     def __init__(self, a, b, c, d):
