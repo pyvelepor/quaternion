@@ -1,3 +1,75 @@
+import re
+from math import sqrt
+
+
+def to_str(a, b, c, d):
+    MINUS = '-'
+    PLUS  = '+'
+    I     = 'i'
+    J     = 'j'
+    K     = 'k'
+
+    exp = ''
+    operators = {MINUS, PLUS}
+    imag = {I, J, K}
+
+    exp =  '{sign} {a}'.format(a=abs(a), sign='+' if a >=0 else '-')
+    exp += ' {sign} {b} * i'.format(b=abs(b), sign='+' if b >=0 else '-')
+    exp += ' {sign} {c} * j'.format(c=abs(c), sign='+' if c >=0 else '-')
+    exp += ' {sign} {d} * k'.format(d=abs(d), sign='+' if d >=0 else '-')
+
+    tokens = re.split(' ', exp)
+    exp = []
+
+    index = 0
+
+    while index < len(tokens):
+
+        token = tokens[index]
+
+        if token in operators:
+            exp.append(token)
+
+            if token == PLUS:
+                if not float(tokens[index + 1]):
+                    exp.pop()
+                    try:
+                        while tokens[index + 1] not in operators:
+                            index = index + 1
+                    except IndexError:
+                        index = index + 1
+
+        elif token in imag:
+            exp.append(exp.pop() + token)
+
+        try:
+            float(token)
+        except Exception:
+            pass
+        else:
+            exp.append(token)
+
+        index = index + 1
+
+    expression = ''
+
+    if not exp:
+        return str(0.0)
+
+    while exp:
+        op1 = exp.pop()
+        op = exp.pop()
+
+        expression = op1 + ' ' + expression
+
+        if exp:
+            expression = op + ' ' + expression
+
+        elif op == MINUS:
+            expression = op + expression
+
+    return expression.strip()
+
 class IQuaternion(object):
     def __init__(self, a, b, c, d):
         raise NotImplemented()
@@ -66,16 +138,15 @@ class IQuaternion(object):
     def imag(self):
         raise NotImplemented()
 
-from math import sqrt
-
-from api import IQuaternion
-
 class BaseQuaternion(IQuaternion):
     def __init__(self, a, b, c, d):
         self.a = a
         self.b = b
         self.c = c
         self.d = d
+
+    def __str__(self):
+        return to_str(self.a, self.b, self.c, self.d)
 
     def __neg__(self):
         return self * -1.0
@@ -107,20 +178,20 @@ class BaseQuaternion(IQuaternion):
         return self.__mul__(other)
 
     def _mul_by_quaternion(self, quaternion):
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
+        a1 = self.a
+        b1 = self.b
+        c1 = self.c
+        d1 = self.d
 
-        e = quaternion.a
-        f = quaternion.b
-        g = quaternion.c
-        h = quaternion.d
+        a2 = quaternion.a
+        b2 = quaternion.b
+        c2 = quaternion.c
+        d2 = quaternion.d
 
-        a = a * e - b * f - c * g - d * h
-        b = b * e + a * f + c * h - d * g
-        c = a * g - b * h + c * e + d * f
-        d = a * h + b * g - c * f + d * e
+        a = (a1 * a2) - (b1 * b2) - (c1 * c2) - (d1 * d2)
+        b = (a1 * b2) + (b1 * a2) + (c1 * d2) - (d1 * c2)
+        c = (a1 * c2) - (b1 * d2) + (c1 * a2) + (d1 * b2)
+        d = (a1 * d2) + (b1 * c2) - (c1 * b2) + (d1 * a2)
 
         return self.__class__(a, b, c, d)
 
@@ -175,7 +246,7 @@ class BaseQuaternion(IQuaternion):
 
     @property
     def imag(self):
-        return complex(self.b), complex(self.c), complex(self.d)
+        return self.b*1j, self.c*1j, self.d*1j
 
     @property
     def conjugate(self):
@@ -192,19 +263,17 @@ class BaseQuaternion(IQuaternion):
 
 class Quaternion(BaseQuaternion):
     def __init__(self, a, b, c, d):
-        super(Quaternion, self).__unit__(a, b, c, d)
+        super(Quaternion, self).__init__(a, b, c, d)
 
     def __mul__(self, other):
         if isinstance(other, IQuaternion):
             return self._mul_by_quaternion(other)
 
-        return super(Quaternion, self).__init__(other)
+        return super(Quaternion, self).__mul__(other)
 
     @property
     def inverse(self):
-        self.conjugate / self.magnitude
-
-from api import BaseQuaternion, Quaternion
+        return self.conjugate * (1 / (self.magnitude * self.magnitude))
 
 class UnitQuaternion(BaseQuaternion):
     def __init__(self, a, b, c, d):

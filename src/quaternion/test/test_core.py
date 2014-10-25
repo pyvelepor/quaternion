@@ -38,25 +38,7 @@ class QuaternionTestCase(unittest.TestCase):
 
     def test_str(self):
         q = Quaternion(0, 0, 0, 0)
-        self.assertEqual(str(q), '0.0')
-
-        q = Quaternion(1, 0, 0, 0)
-        self.assertEqual(str(q), '1.0')
-
-        q = Quaternion(0, 1, 0, 0)
-        self.assertEqual(str(q), '1.0i')
-
-        q = Quaternion(0, 0, 1, 0)
-        self.assertEqual(str(q), '1.0j')
-
-        q = Quaternion(0, 0, 0, 1)
-        self.assertEqual(str(q), '1.0k')
-
-        q = Quaternion(1, 1, 1, 1)
-        self.assertEqual(str(q), '1.0 + 1.0i + 1.0j + 1.0k')
-
-        q = Quaternion(-1, -1, -1, -1)
-        self.assertEqual(str(q), '-1.0 - 1.0i - 1.0j - 1.0k')
+        self.assertEqual(str(q), '+0.0+0.0i+0.0j+0.0k')
 
     def test_add(self):
         q = Quaternion(0, 0, 0, 0)
