@@ -4,4 +4,4 @@ MANIFEST
 dist/
 build/
 temp/
-
+*egg-info/
