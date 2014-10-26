@@ -1,8 +1,10 @@
 import re
+
 from math import sqrt
+from numbers import Number
 
 class IQuaternion(object):
-    def __init__(self, a, b, c, d):
+    def __init__(self, *args, **kargs):
         raise NotImplementedError()
 
     def __mul__(self, other):
@@ -54,11 +56,41 @@ class IQuaternion(object):
         raise NotImplementedError()
 
 class BaseQuaternion(IQuaternion):
-    def __init__(self, a, b, c, d):
+    def __init__(self, *args, **kargs):
+        if self._are_numbers(args):
+            self._init_from_components(*args)
+
+        elif self._implements_iquaternion(args):
+            self._init_from_iquaternion(*args)
+
+        else:
+            raise TypeError(
+                "Arguments for BaseQuaternion.__init__ must be of type " \
+                "'IQuaternion' or 'number, number, number, number'"
+            )
+
+    def _are_numbers(self, args):
+        return all([isinstance(x, Number) for x in args])
+
+    def _implements_iquaternion(self, args):
+        if len(args) != 1:
+            return False
+
+        return isinstance(args[0], IQuaternion)
+
+    def _init_from_components(self, a, b, c, d):
         self._a = float(a)
         self._b = float(b)
         self._c = float(c)
         self._d = float(d)
+
+    def _init_from_iquaternion(self, iquaternion):
+        self._init_from_components(
+            iquaternion.a,
+            iquaternion.b,
+            iquaternion.c,
+            iquaternion.d
+        )
 
     def __repr__(self):
         class_name = self.__class__.__name__
@@ -272,8 +304,8 @@ class BaseQuaternion(IQuaternion):
         return sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2 + self.d ** 2)
 
 class Quaternion(BaseQuaternion):
-    def __init__(self, a, b, c, d):
-        super(Quaternion, self).__init__(a, b, c, d)
+    def __init__(self, *args, **kargs):
+        super(Quaternion, self).__init__(*args, **kargs)
 
     def __mul__(self, other):
         if isinstance(other, IQuaternion):
@@ -302,8 +334,8 @@ class Quaternion(BaseQuaternion):
         return self.conjugate / self.magnitude ** 2
 
 class UnitQuaternion(BaseQuaternion):
-    def __init__(self, a, b, c, d):
-        super(UnitQuaternion, self).__init__(a, b, c, d)
+    def __init__(self, *args, **kargs):
+        super(UnitQuaternion, self).__init__(*args, **kargs)
         self /= self.magnitude
 
     def __mul__(self, other):

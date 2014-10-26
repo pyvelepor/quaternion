@@ -17,6 +17,30 @@ class BaseQuaternionTestCase(unittest.TestCase):
             string
         )
 
+    def test_init(self):
+        try:
+            q = BaseQuaternion(1, 0, 0, 0)
+        except Exception:
+            self.fail("BaseQuaternion supports initialization via components.")
+
+        try:
+            q = BaseQuaternion(BaseQuaternion(1, 0, 0, 0))
+        except Exception:
+            self.fail(
+                "BaseQuaternion supports initialization via subclasses " \
+                "of IQuaternion"
+            )
+
+        try:
+            q = BaseQuaternion('apple')
+        except Exception:
+            pass
+        else:
+            self.fail(
+                'BaseQuaternion __init__ only supports initialization via' \
+                'components (a, b, c, d) or objects of type IQuaternion'
+            )
+
     def test_str(self):
         q = BaseQuaternion(1, 0, 0, 0)
         self.assertEqual(str(q), '1.0')
