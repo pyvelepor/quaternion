@@ -259,6 +259,26 @@ class UnitQuaternionTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_add(self):
+        q = UnitQuaternion(1, 1, 1, 1)
+        p = UnitQuaternion(1, 1, 1, 1)
+
+        r = q + p
+
+        self.assertEqual(r.a, 2.0)
+        self.assertEqual(r.b, 2.0)
+        self.assertEqual(r.c, 2.0)
+        self.assertEqual(r.d, 2.0)
+
+    def test_iadd(self):
+        q = UnitQuaternion(1, 1, 1, 1)
+        q += UnitQuaternion(1, 1, 1, 1)
+
+        self.assertEqual(q.a, 0.5)
+        self.assertEqual(q.b, 0.5)
+        self.assertEqual(q.c, 0.5)
+        self.assertEqual(q.d, 0.5)
+
     def test_repr(self):
         q = UnitQuaternion(1, 0, 0, 0)
         string = 'UnitQuaternion<a=1.0, b=0.0, c=0.0, d=0.0>'
