@@ -179,28 +179,11 @@ class BaseQuaternion(IQuaternion):
     def __neg__(self):
         return self * -1.0
 
-    def _add(self, other):
-        q = self
-        p = other
-
-        a = q.a + p.a
-        b = q.b + p.b
-        c = q.c + p.c
-        d = q.d + p.d
-
-        return a, b, c ,d
-
-    def __add__(self, other):
-        return self.__class__(*self._add(other))
-
-    def __sub__(self, other):
-        return self + (-other)
-
     def __mul__(self, other):
-        if isinstance(other, int):
-            return self.__class__(*self._mul_by_scalar(other))
+        if isinstance(other, IQuaternion):
+            return self.__class__(*self._mul_by_quaternion(other))
 
-        if isinstance(other, float):
+        if isinstance(other, Number):
             return self.__class__(*self._mul_by_scalar(other))
 
         raise TypeError()
@@ -208,32 +191,41 @@ class BaseQuaternion(IQuaternion):
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    def __div__(self, other):
-        return self.__mul__(1.0 / other)
-
-    def __iadd__(self, other):
-        self._set_components(*self._add(other))
-
-        return self
-
-    def __isub__(self, other):
-        return self.__iadd__(-other)
-
     def __imul__(self, other):
-        if isinstance(other, int) or isinstance(other, float):
-            self._set_components(*self._mul_by_scalar(other))
+        if isinstance(other, Number):
+            self._init_from_components(*self._mul_by_scalar(other))
+            return self
+
+        if isinstance(other, IQuaternion):
+            self._init_from_components(*self._mul_by_quaternion(other))
             return self
 
         raise TypeError()
 
-    def __idiv__(self, other):
-        return self.__imul__(1.0 / other)
+    def __div__(self, other):
+        if isinstance(other, IQuaternion):
+            return self.__class__(*self._mul_by_quaternion(other.inverse))
 
-    def _set_components(self, a, b, c, d):
-        self._a = a
-        self._b = b
-        self._c = c
-        self._d = d
+        elif isinstance(other, Number):
+            return self.__class__(*self._mul_by_scalar(1.0 / other))
+
+    def __idiv__(self, other):
+        if isinstance(other, IQuaternion):
+            self._init_from_components(*self._mul_by_quaternion(other.inverse))
+            return self
+
+        elif isinstance(other, Number):
+            self._init_from_components(*self._mul_by_scalar(1.0 / other))
+            return self
+
+    def __rdiv__(self, other):
+        self.inverse.__mul__(other)
+
+    def _div_by_scalar(self, scalar):
+        return self._mul_by_scalar(1.0/scalar)
+
+    def _div_by_quaternion(self, quaternion):
+        return self._mul_by_quaternion(quaternion.inverse)
 
     def _mul_by_quaternion(self, quaternion):
         a1 = self.a
@@ -307,27 +299,36 @@ class Quaternion(BaseQuaternion):
     def __init__(self, *args, **kargs):
         super(Quaternion, self).__init__(*args, **kargs)
 
-    def __mul__(self, other):
+    def __add__(self, other):
         if isinstance(other, IQuaternion):
-            return self.__class__(*self._mul_by_quaternion(other))
+            return self.__class__(*self._add(other))
 
-        return super(Quaternion, self).__mul__(other)
+        raise TypeError('Operands must be instance of \'IQuaternion\'')
 
-    def __div__(self, other):
+    def __iadd__(self, other):
         if isinstance(other, IQuaternion):
-            return self.__mul__(other.inverse)
+            self._init_from_components(*self._add(other))
 
-        return super(Quaternion, self).__div__(other)
-
-    def __imul__(self, other):
-        if isinstance(other, IQuaternion):
-            self._set_components(*self._mul_by_quaternion(other))
             return self
 
-        return super(Quaternion, self).__imul__(other)
+        raise TypeError('Operands must be instance of \'IQuaternion\'')
 
-    def __idiv__(self, other):
-        return self.__imul__(other.inverse)
+    def __sub__(self, other):
+        return self.__add__(-other)
+
+    def __isub__(self, other):
+        return self.__iadd__(-other)
+
+    def _add(self, other):
+        q = self
+        p = other
+
+        a = q.a + p.a
+        b = q.b + p.b
+        c = q.c + p.c
+        d = q.d + p.d
+
+        return a, b, c ,d
 
     @property
     def inverse(self):
@@ -336,50 +337,80 @@ class Quaternion(BaseQuaternion):
 class UnitQuaternion(BaseQuaternion):
     def __init__(self, *args, **kargs):
         super(UnitQuaternion, self).__init__(*args, **kargs)
-        self /= self.magnitude
+        magnitude = self.magnitude
+
+        self._a /= magnitude
+        self._b /= magnitude
+        self._c /= magnitude
+        self._d /= magnitude
+
+    def __add__(self, other):
+        quaternion = Quaternion(self)
+        return quaternion + other
+
+    def __sub__(self, other):
+        return self.__add__(-other)
 
     def __mul__(self, other):
-        if isinstance(other, IQuaternion):
-            if isinstance(other, Quaternion):
-                other = self.from_quaternion(other)
+        if isinstance(other, Number):
+            if other == 1:
+                return UnitQuaternion(self)
 
-            return self.__class__(*self._mul_by_quaternion(other))
+        if isinstance(other, IQuaternion):
+            return Quaternion(self) * other
 
         return super(UnitQuaternion, self).__mul__(other)
 
+    def __rmul__(self, other):
+        if isinstance(other, Number):
+            if other == 1:
+                return UnitQuaternion(self)
+
+        if isinstance(other, Quaternion):
+            return Quaternion(self) * other
+
+        return super(UnitQuaternion, self).__rmul__(other)
+
     def __div__(self, other):
-        if isinstance(other, IQuaternion):
-            return self.__mul__(other.inverse)
+        if isinstance(other, Number):
+            if other == 1:
+                return UnitQuaternion(self)
+
+        if isinstance(other, Quaternion):
+            return Quaternion(self)  / other
 
         return super(UnitQuaternion, self).__div__(other)
 
+
+    def __rdiv__(self, other):
+        if isinstance(other, Number):
+            if other == 1:
+                return UnitQuaternion(self.inverse)
+
+        if isinstance(other, Quaternion):
+            return other / Quaternion(self)
+
+        return super(UnitQuaternion, self).__rdiv__(other)
+
+
     def __imul__(self, other):
-
-        if isinstance(other, IQuaternion):
-            if isinstance(other, Quaternion):
-
-                other = self.from_quaternion(other)
-
-            self._set_components(*self._mul_by_quaternion(other))
-
-            return self
-
-        return super(UnitQuaternion, self).__imul__(other)
+        #Can only support `other` of type UnitQuaternion or scalar value of 1
+        pass
 
     def __idiv__(self, other):
-        if isinstance(other, IQuaternion):
-            return self.__imul__(other.inverse)
+        #Can only support `other` of type UnitQuaternion or scalar value of 1
+        pass
 
-        return super(UnitQuaternion, self).__idiv__(other)
+    def _init_from_components(self, a, b, c, d):
+        super(UnitQuaternion, self)._init_from_components(a, b, c, d)
 
-    def _set_components(self, a, b, c, d):
-        super(UnitQuaternion, self)._set_components(a, b, c, d)
         magnitude = self.magnitude
         a /= magnitude
         b /= magnitude
         c /= magnitude
         d /= magnitude
-        super(UnitQuaternion, self)._set_components(a, b, c, d)
+        
+        super(UnitQuaternion, self)._init_from_components(a, b, c, d)
 
     @property
     def inverse(self):

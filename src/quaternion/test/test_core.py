@@ -1,5 +1,5 @@
 import unittest
-from quaternion.api import BaseQuaternion, Quaternion, UnitQuaternion
+from quaternion.api import BaseQuaternion, Quaternion, Quaternion, UnitQuaternion
 
 class BaseQuaternionTestCase(unittest.TestCase):
     def setUp(self):
@@ -89,72 +89,6 @@ class BaseQuaternionTestCase(unittest.TestCase):
         q = BaseQuaternion(0, 1, 1, 1)
         self.assertEqual(q.imag, (1j, 1j, 1j))
 
-    def test_add(self):
-        q = BaseQuaternion(1, 1, 1, 1)
-        p = BaseQuaternion(1, 1, 1, 1)
-
-        r = q + p
-
-        self.assertEqual(r.a, 2.0)
-        self.assertEqual(r.b, 2.0)
-        self.assertEqual(r.c, 2.0)
-        self.assertEqual(r.d, 2.0)
-
-    def test_iadd(self):
-        q = BaseQuaternion(1, 1, 1, 1)
-        q += BaseQuaternion(1, 1, 1, 1)
-
-        self.assertEqual(q.a, 2.0)
-        self.assertEqual(q.b, 2.0)
-        self.assertEqual(q.c, 2.0)
-        self.assertEqual(q.d, 2.0)
-
-    def test_sub(self):
-        q = BaseQuaternion(1, 1, 1, 1)
-        p = BaseQuaternion(1, 1, 1, 1)
-
-        r = q - p
-
-        self.assertEqual(r.a, 0.0)
-        self.assertEqual(r.b, 0.0)
-        self.assertEqual(r.c, 0.0)
-        self.assertEqual(r.d, 0.0)
-
-    def test_isub(self):
-        q  = BaseQuaternion(1, 1, 1, 1)
-        q -= BaseQuaternion(1, 1, 1, 1)
-
-        self.assertEqual(q.a, 0.0)
-        self.assertEqual(q.b, 0.0)
-        self.assertEqual(q.c, 0.0)
-        self.assertEqual(q.d, 0.0)
-
-    def test_mul_by_scalar(self):
-        q = BaseQuaternion(0.5, 0.5, 0.5, 0.5)
-
-        p = q * 2
-        r = 2 * q
-
-        self.assertTrue(p.a, 1)
-        self.assertTrue(p.b, 1)
-        self.assertTrue(p.c, 1)
-        self.assertTrue(p.d, 1)
-
-        self.assertTrue(r.a, 1)
-        self.assertTrue(r.b, 1)
-        self.assertTrue(r.c, 1)
-        self.assertTrue(r.d, 1)
-
-    def test_div_by_scalar(self):
-        q = BaseQuaternion(1, 1, 1, 1)
-
-        p = q / 2
-
-        self.assertTrue(p.a, 0.5)
-        self.assertTrue(p.b, 0.5)
-        self.assertTrue(p.c, 0.5)
-        self.assertTrue(p.d, 0.5)
-
     def test_magnitude(self):
         q = BaseQuaternion(1, 0, 0, 0)
         p = BaseQuaternion(1, 1, 1, 1)
@@ -198,6 +132,73 @@ class QuaternionTestCase(unittest.TestCase):
             repr(q),
             string
         )
+
+    def test_add(self):
+        q = Quaternion(1, 1, 1, 1)
+        p = Quaternion(1, 1, 1, 1)
+
+        r = q + p
+
+        self.assertEqual(r.a, 2.0)
+        self.assertEqual(r.b, 2.0)
+        self.assertEqual(r.c, 2.0)
+        self.assertEqual(r.d, 2.0)
+
+    def test_iadd(self):
+        q  = Quaternion(1, 1, 1, 1)
+        q += Quaternion(1, 1, 1, 1)
+
+        self.assertEqual(q.a, 2.0)
+        self.assertEqual(q.b, 2.0)
+        self.assertEqual(q.c, 2.0)
+        self.assertEqual(q.d, 2.0)
+
+    def test_sub(self):
+        q = Quaternion(1, 1, 1, 1)
+        p = Quaternion(1, 1, 1, 1)
+
+        r = q - p
+
+        self.assertEqual(r.a, 0.0)
+        self.assertEqual(r.b, 0.0)
+        self.assertEqual(r.c, 0.0)
+        self.assertEqual(r.d, 0.0)
+
+    def test_isub(self):
+        q  = Quaternion(1, 1, 1, 1)
+        q -= Quaternion(1, 1, 1, 1)
+
+        self.assertEqual(q.a, 0.0)
+        self.assertEqual(q.b, 0.0)
+        self.assertEqual(q.c, 0.0)
+        self.assertEqual(q.d, 0.0)
+
+    def test_mul_by_scalar(self):
+        q = Quaternion(0.5, 0.5, 0.5, 0.5)
+
+        p = q * 2
+        r = 2 * q
+
+        self.assertTrue(p.a, 1)
+        self.assertTrue(p.b, 1)
+        self.assertTrue(p.c, 1)
+        self.assertTrue(p.d, 1)
+
+        self.assertTrue(r.a, 1)
+        self.assertTrue(r.b, 1)
+        self.assertTrue(r.c, 1)
+        self.assertTrue(r.d, 1)
+
+    def test_div_by_scalar(self):
+        q = Quaternion(1, 1, 1, 1)
+
+        p = q / 2
+
+        self.assertTrue(p.a, 0.5)
+        self.assertTrue(p.b, 0.5)
+        self.assertTrue(p.c, 0.5)
+        self.assertTrue(p.d, 0.5)
+
 
     def test_mul_by_quaternion(self):
         q = Quaternion(1, 1, 1, 1)
@@ -289,19 +290,35 @@ class UnitQuaternionTestCase(unittest.TestCase):
 
         r = q + p
 
-        self.assertEqual(r.a, 2.0)
-        self.assertEqual(r.b, 2.0)
-        self.assertEqual(r.c, 2.0)
-        self.assertEqual(r.d, 2.0)
+        self.assertEqual(r.a, 1.0)
+        self.assertEqual(r.b, 1.0)
+        self.assertEqual(r.c, 1.0)
+        self.assertEqual(r.d, 1.0)
 
-    def test_iadd(self):
+        r = p + q
+
+        self.assertEqual(r.a, 1.0)
+        self.assertEqual(r.b, 1.0)
+        self.assertEqual(r.c, 1.0)
+        self.assertEqual(r.d, 1.0)
+
         q = UnitQuaternion(1, 1, 1, 1)
-        q += UnitQuaternion(1, 1, 1, 1)
+        p = Quaternion(1, 1, 1, 1)
 
-        self.assertEqual(q.a, 0.5)
-        self.assertEqual(q.b, 0.5)
-        self.assertEqual(q.c, 0.5)
-        self.assertEqual(q.d, 0.5)
+        r = q + p
+
+        self.assertEqual(r.a, 1.5)
+        self.assertEqual(r.b, 1.5)
+        self.assertEqual(r.c, 1.5)
+        self.assertEqual(r.d, 1.5)
+
+        r = p + q
+
+        self.assertEqual(r.a, 1.5)
+        self.assertEqual(r.b, 1.5)
+        self.assertEqual(r.c, 1.5)
+        self.assertEqual(r.d, 1.5)
+
 
     def test_repr(self):
         q = UnitQuaternion(1, 0, 0, 0)
