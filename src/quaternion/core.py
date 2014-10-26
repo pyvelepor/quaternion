@@ -405,12 +405,10 @@ class UnitQuaternion(BaseQuaternion):
         super(UnitQuaternion, self)._init_from_components(a, b, c, d)
 
         magnitude = self.magnitude
-        a /= magnitude
-        b /= magnitude
-        c /= magnitude
-        d /= magnitude
-        
-        super(UnitQuaternion, self)._init_from_components(a, b, c, d)
+        self._a /= magnitude
+        self._b /= magnitude
+        self._c /= magnitude
+        self._d /= magnitude
 
     @property
     def inverse(self):
