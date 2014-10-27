@@ -40,6 +40,10 @@ class IQuaternion(object):
         raise NotImplementedError()
 
     @property
+    def norm(self):
+        raise NotImplementedError()
+
+    @property
     def conjugate(self):
         raise NotImplementedError()
 
@@ -95,7 +99,7 @@ class BaseQuaternion(IQuaternion):
     def __repr__(self):
         class_name = self.__class__.__name__
 
-        string = '{name}<a={a}, b={b}, c={c}, d={d}>'
+        string = '<{name} a={a}, b={b}, c={c}, d={d}>'
         string = string.format(
             name=class_name,
             a=self.a,
@@ -295,6 +299,10 @@ class BaseQuaternion(IQuaternion):
     def magnitude(self):
         return sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2 + self.d ** 2)
 
+    @property
+    def norm(self):
+        return self / self.magnitude
+
 class Quaternion(BaseQuaternion):
     def __init__(self, *args, **kargs):
         super(Quaternion, self).__init__(*args, **kargs)
@@ -333,83 +341,3 @@ class Quaternion(BaseQuaternion):
     @property
     def inverse(self):
         return self.conjugate / self.magnitude ** 2
-
-class UnitQuaternion(BaseQuaternion):
-    def __init__(self, *args, **kargs):
-        super(UnitQuaternion, self).__init__(*args, **kargs)
-        magnitude = self.magnitude
-
-        self._a /= magnitude
-        self._b /= magnitude
-        self._c /= magnitude
-        self._d /= magnitude
-
-    def __add__(self, other):
-        quaternion = Quaternion(self)
-        return quaternion + other
-
-    def __sub__(self, other):
-        return self.__add__(-other)
-
-    def __mul__(self, other):
-        if isinstance(other, Number):
-            if other == 1:
-                return UnitQuaternion(self)
-
-        if isinstance(other, IQuaternion):
-            return Quaternion(self) * other
-
-        return super(UnitQuaternion, self).__mul__(other)
-
-    def __rmul__(self, other):
-        if isinstance(other, Number):
-            if other == 1:
-                return UnitQuaternion(self)
-
-        if isinstance(other, Quaternion):
-            return Quaternion(self) * other
-
-        return super(UnitQuaternion, self).__rmul__(other)
-
-    def __div__(self, other):
-        if isinstance(other, Number):
-            if other == 1:
-                return UnitQuaternion(self)
-
-        if isinstance(other, Quaternion):
-            return Quaternion(self)  / other
-
-        return super(UnitQuaternion, self).__div__(other)
-
-
-    def __rdiv__(self, other):
-        if isinstance(other, Number):
-            if other == 1:
-                return UnitQuaternion(self.inverse)
-
-        if isinstance(other, Quaternion):
-            return other / Quaternion(self)
-
-        return super(UnitQuaternion, self).__rdiv__(other)
-
-
-    def __imul__(self, other):
-        #Can only support `other` of type UnitQuaternion or scalar value of 1
-        pass
-
-    def __idiv__(self, other):
-        #Can only support `other` of type UnitQuaternion or scalar value of 1
-        pass
-
-    def _init_from_components(self, a, b, c, d):
-        super(UnitQuaternion, self)._init_from_components(a, b, c, d)
-
-        magnitude = self.magnitude
-        self._a /= magnitude
-        self._b /= magnitude
-        self._c /= magnitude
-        self._d /= magnitude
-
-    @property
-    def inverse(self):
-        return self.conjugate
