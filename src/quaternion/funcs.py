@@ -2,10 +2,10 @@ import quaternion.api as qapi
 from math import arccos
 
 __all__ = [
-    'is_unit_quaternion', 'are_same_orientation',
+    'is_unit_quaternion', 'equal_orientation',
     'add', 'sub', 'mul', 'div',
     'conjugate', 'inverse', 'magnitude', 'norm',
-    'inner_product', 'delta_q', 'distance',
+    'inner_product', 'delta', 'distance',
 ]
 
 def is_unit_quaternion(q, tolerance=0.0):
@@ -30,7 +30,7 @@ def are_identical(q, p, tolerance=0.0):
 
     return True
 
-def are_same_orientation(q, p, tolerance=0.0):
+def equal_orientation(q, p, tolerance=0.0):
     theta = angle_of_separation(q, p)
 
     return theta <= tolerance
@@ -73,5 +73,5 @@ def angle_of_separation(q, p):
 def distance(q, p):
     return 1 - inner_product(q, p)
 
-def delta_q(q, p):
+def delta(q, p):
     return q * p.inverse

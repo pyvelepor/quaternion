@@ -46,6 +46,37 @@ class ArithmeticTestCase(unittest.TestCase):
         self.assertEqual(r.c, 0)
         self.assertEqual(r.d, 0)
 
+    def test_conjugate(self):
+        q = qapi.Quaternion(1, 1, 1, 1)
+        p = qapi.conjugate(q)
+
+        self.assertEqual(p.a, 1)
+        self.assertEqual(p.b, -1)
+        self.assertEqual(p.c, -1)
+        self.assertEqual(p.d, -1)
+
+    def test_magnitude(self):
+        q = qapi.Quaternion(1, 1, 1, 1)
+        magnitude = qapi.magnitude(q)
+
+        self.assertEqual(magnitude, 2)
+
+        q = qapi.Quaternion(0.5, 0.5, 0.5, 0.5)
+        magnitude = qapi.magnitude(q)
+
+        self.assertEqual(magnitude, 1)
+
+    def test_inverse(self):
+        q = qapi.Quaternion(1, 1, 1, 1)
+        p = qapi.inverse(q)
+
+        self.assertEqual(p.a, 0.25)
+        self.assertEqual(p.b, -0.25)
+        self.assertEqual(p.c, -0.25)
+        self.assertEqual(p.d, -0.25)
+
+
+
 class ChecksTestCase(unittest.TestCase):
     pass
 
