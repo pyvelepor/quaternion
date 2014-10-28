@@ -223,7 +223,7 @@ class BaseQuaternion(IQuaternion):
             return self
 
     def __rdiv__(self, other):
-        self.inverse.__mul__(other)
+        return self.inverse.__mul__(other)
 
     def _div_by_scalar(self, scalar):
         return self._mul_by_scalar(1.0 / scalar)

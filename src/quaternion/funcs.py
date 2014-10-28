@@ -1,5 +1,5 @@
-import quaternion.api as qapi
-from math import arccos
+import quaternion.core as qapi
+from math import acos
 
 __all__ = [
     'is_unit_quaternion', 'equal_orientation',
@@ -44,6 +44,9 @@ def sub(q, p):
 def mul(q, p):
     return q * p
 
+def scale(q, s):
+    return s * q
+
 def div(q, p):
     return q / p
 
@@ -68,7 +71,7 @@ def inner_product(q, p):
     return a + b + c + d
 
 def angle_of_separation(q, p):
-    return arccos(2 * inner_product(q, p) ** 2 - 1)
+    return acos(2 * inner_product(q, p) ** 2 - 1)
 
 def distance(q, p):
     return 1 - inner_product(q, p)

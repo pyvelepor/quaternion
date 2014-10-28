@@ -1,5 +1,5 @@
 import unittest
-from quaternion.api import BaseQuaternion, Quaternion, Quaternion, UnitQuaternion
+from quaternion.api import BaseQuaternion, Quaternion
 
 class BaseQuaternionTestCase(unittest.TestCase):
     def setUp(self):
@@ -10,7 +10,7 @@ class BaseQuaternionTestCase(unittest.TestCase):
 
     def test_repr(self):
         q = BaseQuaternion(1, 0, 0, 0)
-        string = 'BaseQuaternion<a=1.0, b=0.0, c=0.0, d=0.0>'
+        string = '<BaseQuaternion a=1.0, b=0.0, c=0.0, d=0.0>'
 
         self.assertEqual(
             repr(q),
@@ -126,7 +126,7 @@ class QuaternionTestCase(unittest.TestCase):
 
     def test_repr(self):
         q = Quaternion(1, 0, 0, 0)
-        string = 'Quaternion<a=1.0, b=0.0, c=0.0, d=0.0>'
+        string = '<Quaternion a=1.0, b=0.0, c=0.0, d=0.0>'
 
         self.assertEqual(
             repr(q),
@@ -189,6 +189,36 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertTrue(r.c, 1)
         self.assertTrue(r.d, 1)
 
+        p = q * 1
+        r = 1 * q
+
+        self.assertTrue(p.a, 0.5)
+        self.assertTrue(p.b, 0.5)
+        self.assertTrue(p.c, 0.5)
+        self.assertTrue(p.d, 0.5)
+
+        self.assertTrue(r.a, 0.5)
+        self.assertTrue(r.b, 0.5)
+        self.assertTrue(r.c, 0.5)
+        self.assertTrue(r.d, 0.5)
+
+    def test_neg(self):
+        q = Quaternion(1, 1, 1, 1)
+
+        p = -q
+
+        self.assertTrue(p.a, -1)
+        self.assertTrue(p.b, -1)
+        self.assertTrue(p.c, -1)
+        self.assertTrue(p.d, -1)
+
+        r = -p
+
+        self.assertTrue(r.a, 1)
+        self.assertTrue(r.b, 1)
+        self.assertTrue(r.c, 1)
+        self.assertTrue(r.d, 1)
+
     def test_div_by_scalar(self):
         q = Quaternion(1, 1, 1, 1)
 
@@ -198,6 +228,14 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertTrue(p.b, 0.5)
         self.assertTrue(p.c, 0.5)
         self.assertTrue(p.d, 0.5)
+
+        #equivalent to 2 * q.inverse
+        r = 2 / q
+
+        self.assertTrue(r.a,  0.5)
+        self.assertTrue(r.b, -0.5)
+        self.assertTrue(r.c, -0.5)
+        self.assertTrue(r.d, -0.5)
 
 
     def test_mul_by_quaternion(self):
@@ -276,126 +314,6 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(p.b, -0.25)
         self.assertEqual(p.c, -0.25)
         self.assertEqual(p.d, -0.25)
-
-class UnitQuaternionTestCase(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_add(self):
-        q = UnitQuaternion(1, 1, 1, 1)
-        p = UnitQuaternion(1, 1, 1, 1)
-
-        r = q + p
-
-        self.assertEqual(r.a, 1.0)
-        self.assertEqual(r.b, 1.0)
-        self.assertEqual(r.c, 1.0)
-        self.assertEqual(r.d, 1.0)
-
-        r = p + q
-
-        self.assertEqual(r.a, 1.0)
-        self.assertEqual(r.b, 1.0)
-        self.assertEqual(r.c, 1.0)
-        self.assertEqual(r.d, 1.0)
-
-        q = UnitQuaternion(1, 1, 1, 1)
-        p = Quaternion(1, 1, 1, 1)
-
-        r = q + p
-
-        self.assertEqual(r.a, 1.5)
-        self.assertEqual(r.b, 1.5)
-        self.assertEqual(r.c, 1.5)
-        self.assertEqual(r.d, 1.5)
-
-        r = p + q
-
-        self.assertEqual(r.a, 1.5)
-        self.assertEqual(r.b, 1.5)
-        self.assertEqual(r.c, 1.5)
-        self.assertEqual(r.d, 1.5)
-
-
-    def test_repr(self):
-        q = UnitQuaternion(1, 0, 0, 0)
-        string = 'UnitQuaternion<a=1.0, b=0.0, c=0.0, d=0.0>'
-
-        self.assertEqual(
-            repr(q),
-            string
-        )
-
-    def test_mul_by_quaternion(self):
-        q = UnitQuaternion(1, 1, 1, 1)
-        p = UnitQuaternion(0.25, -0.25, -0.25, -0.25)
-
-        r = q * p
-        t = p * q
-
-        self.assertEqual(r.a, 1)
-        self.assertEqual(r.b, 0)
-        self.assertEqual(r.c, 0)
-        self.assertEqual(r.d, 0)
-
-        self.assertEqual(t.a, 1)
-        self.assertEqual(t.b, 0)
-        self.assertEqual(t.c, 0)
-        self.assertEqual(t.d, 0)
-
-    def test_imul_by_quaternion(self):
-        q  = UnitQuaternion(1, 1, 1, 1)
-        q *= UnitQuaternion(0.25, -0.25, -0.25, -0.25)
-
-        p  = UnitQuaternion(0.25, -0.25, -0.25, -0.25)
-        p *= UnitQuaternion(1, 1, 1, 1)
-
-        self.assertEqual(q.a, 1)
-        self.assertEqual(q.b, 0)
-        self.assertEqual(q.c, 0)
-        self.assertEqual(q.d, 0)
-
-        self.assertEqual(p.a, 1)
-        self.assertEqual(p.b, 0)
-        self.assertEqual(p.c, 0)
-        self.assertEqual(p.d, 0)
-
-    def test_div_by_quaternion(self):
-        q = UnitQuaternion(1, 1, 1, 1)
-        p = UnitQuaternion(1, 1, 1, 1)
-
-        r = q / p
-        t = p / q
-
-        self.assertEqual(r.a, 1)
-        self.assertEqual(r.b, 0)
-        self.assertEqual(r.c, 0)
-        self.assertEqual(r.d, 0)
-
-        self.assertEqual(t.a, 1)
-        self.assertEqual(t.b, 0)
-        self.assertEqual(t.c, 0)
-        self.assertEqual(t.d, 0)
-
-    def test_idiv_by_quaternion(self):
-        q  = UnitQuaternion(1, 1, 1, 1)
-        q /= UnitQuaternion(1, 1, 1, 1)
-
-        p  = UnitQuaternion(0.25, 0.25, 0.25, 0.25)
-        p /= UnitQuaternion(0.25, 0.25, 0.25, 0.25)
-
-        self.assertEqual(q.a, 1)
-        self.assertEqual(q.b, 0)
-        self.assertEqual(q.c, 0)
-        self.assertEqual(q.d, 0)
-
-        self.assertEqual(p.a, 1)
-        self.assertEqual(p.b, 0)
-        self.assertEqual(p.c, 0)
-        self.assertEqual(p.d, 0)
 
 if __name__ == "__main__":
     unittest.main()

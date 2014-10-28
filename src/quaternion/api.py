@@ -1,2 +1,2 @@
-from core import IQuaternion, BaseQuaternion, Quaternion, UnitQuaternion
+from core import IQuaternion, BaseQuaternion, Quaternion
 from funcs import *
