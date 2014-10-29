@@ -170,6 +170,24 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(q.c, 2.0)
         self.assertEqual(q.d, 2.0)
 
+        q  = Quaternion(1, 1, 1, 1)
+        q += Quaternion(0, 0, 0, 0)
+
+        self.assertEqual(q.a, 1.0)
+        self.assertEqual(q.b, 1.0)
+        self.assertEqual(q.c, 1.0)
+        self.assertEqual(q.d, 1.0)
+
+        q = Quaternion(0, 0, 0, 0)
+        q += Quaternion(1, 1, 1, 1)
+
+        self.assertEqual(q.a, 1.0)
+        self.assertEqual(q.b, 1.0)
+        self.assertEqual(q.c, 1.0)
+        self.assertEqual(q.d, 1.0)
+
+
+
     def test_sub(self):
         q = Quaternion(1, 1, 1, 1)
         p = Quaternion(0, 0, 0, 0)
@@ -204,6 +222,22 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(q.b, 0.0)
         self.assertEqual(q.c, 0.0)
         self.assertEqual(q.d, 0.0)
+
+        q = Quaternion(0, 0, 0, 0)
+        q -= Quaternion(1, 1, 1, 1)
+
+        self.assertEqual(q.a, -1.0)
+        self.assertEqual(q.b, -1.0)
+        self.assertEqual(q.c, -1.0)
+        self.assertEqual(q.d, -1.0)
+
+        q = Quaternion(1, 1, 1, 1)
+        q -= Quaternion(0, 0, 0, 0)
+
+        self.assertEqual(q.a, 1.0)
+        self.assertEqual(q.b, 1.0)
+        self.assertEqual(q.c, 1.0)
+        self.assertEqual(q.d, 1.0)
 
     def test_mul_by_scalar(self):
         q = Quaternion(0.5, 0.5, 0.5, 0.5)
@@ -362,14 +396,21 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(t.c, 0)
         self.assertEqual(t.d, 0)
 
-        p = Quaternion(1, 2, 3, 4)
+        q = Quaternion(1, 2, 3, 4)
+        p = Quaternion(5, 6, 7, 8)
         r = q / p
 
-        self.assertEqual(r.a, 9.0 / 10.0)
-        self.assertEqual(r.a, 9.0 / 10.0)
-        self.assertEqual(r.a, 9.0 / 10.0)
-        self.assertEqual(r.a, 9.0 / 10.0)
+        self.assertAlmostEqual(r.a, 35.0 / 87.0)
+        self.assertAlmostEqual(r.b, 4.0 / 87.0)
+        self.assertAlmostEqual(r.c, 0.0 / 87.0)
+        self.assertAlmostEqual(r.d, 8.0 / 87.0)
 
+        r = p / q
+
+        self.assertAlmostEqual(r.a, 35.0 / 15.0)
+        self.assertAlmostEqual(r.b, -4.0 / 15.0)
+        self.assertAlmostEqual(r.c,  0.0 / 15.0)
+        self.assertAlmostEqual(r.d, -8.0 / 15.0)
 
 
     def test_idiv_by_quaternion(self):
@@ -389,7 +430,31 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(p.c, 0)
         self.assertEqual(p.d, 0)
 
+        q = Quaternion(1, 2, 3, 4)
+        q /= Quaternion(5, 6, 7, 8)
+
+        self.assertAlmostEqual(q.a, 35.0 / 87.0)
+        self.assertAlmostEqual(q.b, 4.0 / 87.0)
+        self.assertAlmostEqual(q.c, 0.0 / 87.0)
+        self.assertAlmostEqual(q.d, 8.0 / 87.0)
+
+        q = Quaternion(5, 6, 7, 8)
+        q /= Quaternion(1, 2, 3, 4)
+
+        self.assertAlmostEqual(q.a, 35.0 / 15.0)
+        self.assertAlmostEqual(q.b, -4.0 / 15.0)
+        self.assertAlmostEqual(q.c,  0.0 / 15.0)
+        self.assertAlmostEqual(q.d, -8.0 / 15.0)
+
     def test_inverse(self):
+        q = Quaternion(1, 2, 3, 4)
+        p = q.inverse
+
+        self.assertAlmostEqual(p.a,  1.0 / 30.0)
+        self.assertAlmostEqual(p.b, -2.0 / 30.0)
+        self.assertAlmostEqual(p.c, -3.0 / 30.0)
+        self.assertAlmostEqual(p.d, -4.0 / 30.0)
+
         q = Quaternion(1, 1, 1, 1)
         p = q.inverse
 
@@ -400,6 +465,21 @@ class QuaternionTestCase(unittest.TestCase):
 
         q = Quaternion(1, 0, 0, 0)
         p = q.inverse
+
+        self.assertEqual(p.a, 1)
+        self.assertEqual(p.b, 0)
+        self.assertEqual(p.c, 0)
+        self.assertEqual(p.d, 0)
+
+        q = Quaternion(1, 1, 1, 1)
+        p = q * q.inverse
+
+        self.assertEqual(p.a, 1)
+        self.assertEqual(p.b, 0)
+        self.assertEqual(p.c, 0)
+        self.assertEqual(p.d, 0)
+
+        p = q.inverse * q
 
         self.assertEqual(p.a, 1)
         self.assertEqual(p.b, 0)
