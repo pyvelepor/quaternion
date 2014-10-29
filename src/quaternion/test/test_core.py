@@ -144,6 +144,23 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(r.c, 2.0)
         self.assertEqual(r.d, 2.0)
 
+        t = p + q
+
+        self.assertEqual(r.a, 2.0)
+        self.assertEqual(r.b, 2.0)
+        self.assertEqual(r.c, 2.0)
+        self.assertEqual(r.d, 2.0)
+
+        p = Quaternion(0, 0, 0, 0)
+
+        s = p + q
+
+        self.assertEqual(s.a, 1)
+        self.assertEqual(s.b, 1)
+        self.assertEqual(s.d, 1)
+        self.assertEqual(s.c, 1)
+
+
     def test_iadd(self):
         q  = Quaternion(1, 1, 1, 1)
         q += Quaternion(1, 1, 1, 1)
@@ -155,14 +172,29 @@ class QuaternionTestCase(unittest.TestCase):
 
     def test_sub(self):
         q = Quaternion(1, 1, 1, 1)
-        p = Quaternion(1, 1, 1, 1)
+        p = Quaternion(0, 0, 0, 0)
 
         r = q - p
 
-        self.assertEqual(r.a, 0.0)
-        self.assertEqual(r.b, 0.0)
-        self.assertEqual(r.c, 0.0)
-        self.assertEqual(r.d, 0.0)
+        self.assertEqual(r.a, 1.0)
+        self.assertEqual(r.b, 1.0)
+        self.assertEqual(r.c, 1.0)
+        self.assertEqual(r.d, 1.0)
+
+        s = p - q
+
+        self.assertEqual(s.a, -1.0)
+        self.assertEqual(s.b, -1.0)
+        self.assertEqual(s.c, -1.0)
+        self.assertEqual(s.d, -1.0)
+
+        p = Quaternion(1, 1, 1, 1)
+        t = q - p
+
+        self.assertEqual(t.a, 0)
+        self.assertEqual(t.b, 0)
+        self.assertEqual(t.c, 0)
+        self.assertEqual(t.d, 0)
 
     def test_isub(self):
         q  = Quaternion(1, 1, 1, 1)
@@ -237,6 +269,13 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertTrue(r.c, -0.5)
         self.assertTrue(r.d, -0.5)
 
+        p = q / 1
+
+        self.assertTrue(p.a, 1)
+        self.assertTrue(p.b, 1)
+        self.assertTrue(p.c, 1)
+        self.assertTrue(p.d, 1)
+
 
     def test_mul_by_quaternion(self):
         q = Quaternion(1, 1, 1, 1)
@@ -255,6 +294,22 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(t.c, 0)
         self.assertEqual(t.d, 0)
 
+        q = Quaternion(1, 2, 3, 4)
+        p = Quaternion(5, 6, 7 ,8)
+        r = q * p
+
+        self.assertEqual(r.a, -60)
+        self.assertEqual(r.b, 12)
+        self.assertEqual(r.c, 30)
+        self.assertEqual(r.d, 24)
+
+        s = p * q
+
+        self.assertEqual(s.a, -60)
+        self.assertEqual(s.b, 20)
+        self.assertEqual(s.c, 14)
+        self.assertEqual(s.d, 32)
+
     def test_imul_by_quaternion(self):
         q = Quaternion(1, 1, 1, 1)
         q *= Quaternion(0.25, -0.25, -0.25, -0.25)
@@ -272,6 +327,24 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(p.c, 0)
         self.assertEqual(p.d, 0)
 
+        q = Quaternion(1, 2, 3, 4)
+        q *= Quaternion(5, 6, 7 ,8)
+
+        self.assertEqual(q.a, -60)
+        self.assertEqual(q.b, 12)
+        self.assertEqual(q.c, 30)
+        self.assertEqual(q.d, 24)
+
+        q = Quaternion(5, 6, 7 ,8)
+        q *= Quaternion(1, 2, 3, 4)
+
+        self.assertEqual(q.a, -60)
+        self.assertEqual(q.b, 20)
+        self.assertEqual(q.c, 14)
+        self.assertEqual(q.d, 32)
+
+
+
     def test_div_by_quaternion(self):
         q = Quaternion(1, 1, 1, 1)
         p = Quaternion(1, 1, 1, 1)
@@ -288,6 +361,16 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(t.b, 0)
         self.assertEqual(t.c, 0)
         self.assertEqual(t.d, 0)
+
+        p = Quaternion(1, 2, 3, 4)
+        r = q / p
+
+        self.assertEqual(r.a, 9.0 / 10.0)
+        self.assertEqual(r.a, 9.0 / 10.0)
+        self.assertEqual(r.a, 9.0 / 10.0)
+        self.assertEqual(r.a, 9.0 / 10.0)
+
+
 
     def test_idiv_by_quaternion(self):
         q = Quaternion(1, 1, 1, 1)
@@ -314,6 +397,14 @@ class QuaternionTestCase(unittest.TestCase):
         self.assertEqual(p.b, -0.25)
         self.assertEqual(p.c, -0.25)
         self.assertEqual(p.d, -0.25)
+
+        q = Quaternion(1, 0, 0, 0)
+        p = q.inverse
+
+        self.assertEqual(p.a, 1)
+        self.assertEqual(p.b, 0)
+        self.assertEqual(p.c, 0)
+        self.assertEqual(p.d, 0)
 
 if __name__ == "__main__":
     unittest.main()

@@ -46,12 +46,11 @@ Functions that produce the same results as
 - inormalized
 
 ## 0.6 Coercion ##
-	- `int`
-	- `long`
-	- `float`
-	- `complex`
+- `int`
+- `long`
+- `float`
+- `complex`
 
-## 0.7 ##
 ## 1.0 Pure python implementation ##
 ## 2.0 Numpy implementation ##
 ## 3.0 Cython implementation ##
